@@ -2,7 +2,7 @@
 
 ## Contexto
 
-Eres parte del equipo de una plataforma de entrenamiento para hackers éticos (*red team*). El equipo necesita una pequeña API para gestionar el **arsenal de herramientas de ciberseguridad** que se recomienda a los estudiantes según la fase del pentesting en la que se encuentren: reconocimiento, escaneo, explotación, post-explotación o defensa.
+Eres parte del equipo de una plataforma de entrenamiento para hackers éticos (_red team_). El equipo necesita una pequeña API para gestionar el **arsenal de herramientas de ciberseguridad** que se recomienda a los estudiantes según la fase del pentesting en la que se encuentren: reconocimiento, escaneo, explotación, post-explotación o defensa.
 
 Tu tarea es construir esta API utilizando **únicamente** lo visto hasta ahora en el curso: una lista en memoria como "base de datos", parámetros de ruta, parámetros de query, el cuerpo de la petición como diccionario, manejo de errores con `HTTPException` y códigos de estado adecuados. No se requiere (ni se debe usar todavía) una base de datos real, modelos de Pydantic, ni ningún paquete externo adicional.
 

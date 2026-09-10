@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query
+from fastapi import Body, FastAPI, HTTPException, Query, status
 
 app = FastAPI(title="Fist App")
 
@@ -76,3 +76,80 @@ def get_anime(
             return {"data": {"id": anime["id"], "title": anime["title"]}}
 
     return {"error": "Anime Not Found"}
+
+
+@app.post("/animes")
+def create_anime(anime: dict = Body(...)):
+
+    if "title" not in anime or "description" not in anime:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The title and description are mandatory",
+        )
+
+    if not str(anime["title"]).strip():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The title cannot be empty",
+        )
+
+    if not str(anime["description"]).strip():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The description cannot be empty",
+        )
+
+    new_id = (ANIMES_LIST[-1]["id"] + 1) if ANIMES_LIST else 1
+
+    new_anime = {
+        "id": new_id,
+        "title": anime["title"],
+        "description": anime["description"],
+    }
+
+    ANIMES_LIST.append(new_anime)
+
+    return {"message": "Created anime"}
+
+
+@app.put("/animes/{anime_id}")
+def update_anime(anime_id: int, data: dict = Body(...)):
+
+    if "title" not in data or "description" not in data:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The title and description are mandatory",
+        )
+
+    if not str(data["title"]).strip():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The title cannot be empty.",
+        )
+
+    if not str(data["description"]).strip():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The description cannot be empty.",
+        )
+
+    for anime in ANIMES_LIST:
+        if anime_id == anime["id"]:
+            anime["title"] = data["title"]
+            anime["description"] = data["description"]
+
+            return {"message": "Updated anime successfully", "data": anime}
+
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Anime Not Found")
+
+
+@app.delete("/animes/{anime_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_anime(anime_id: int):
+
+    for index, anime in enumerate(ANIMES_LIST):
+        if anime["id"] == anime_id:
+            ANIMES_LIST.pop(index)
+            # return {"message": "Deleted anime successfuly"}
+            return
+
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Anime Not Found")

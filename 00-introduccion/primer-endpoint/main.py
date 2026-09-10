@@ -61,9 +61,18 @@ def list_animes(
 
 
 @app.get("/animes/{anime_id}")
-def get_anime(anime_id: int):
-    data = [anime for anime in ANIMES_LIST if anime["id"] == anime_id]
+def get_anime(
+    anime_id: int,
+    include_description: bool | None = Query(
+        default=None,
+        description="Flag to decide whether or not to include the anime description.",
+    ),
+):
+    for anime in ANIMES_LIST:
+        if anime["id"] == anime_id:
+            if include_description:
+                return {"data": anime}
 
-    if len(data) == 0:
-        return {"error": "Anime Not Found"}
-    return {"data": data[0]}
+            return {"data": {"id": anime["id"], "title": anime["title"]}}
+
+    return {"error": "Anime Not Found"}

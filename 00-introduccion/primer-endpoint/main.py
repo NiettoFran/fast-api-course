@@ -58,3 +58,12 @@ def list_animes(
 
         return {"data": results, "query": query}
     return {"data": ANIMES_LIST}
+
+
+@app.get("/animes/{anime_id}")
+def get_anime(anime_id: int):
+    data = [anime for anime in ANIMES_LIST if anime["id"] == anime_id]
+
+    if len(data) == 0:
+        return {"error": "Anime Not Found"}
+    return {"data": data[0]}

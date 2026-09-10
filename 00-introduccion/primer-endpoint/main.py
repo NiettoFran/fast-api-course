@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 
 app = FastAPI(title="Fist App")
 
@@ -34,10 +34,27 @@ ANIMES_LIST = [
 @app.get("/")
 def home():
     return {
-        "message": "Welcome to my first app developed with FastAPI. Author: Francisco Nietto"
+        "message": "Welcome to my first app developed with FastAPI.",
+        "author": "Francisco Nieto",
     }
 
 
 @app.get("/animes")
-def get_animes():
+def list_animes(
+    query: str | None = Query(default=None, description="Text to filter anime")
+):
+    if query:
+        # Without list comprehension
+        # results = []
+
+        # for anime in ANIMES_LIST:
+        #     if query.lower() == anime["title"].lower():
+        #         results.append(anime)
+
+        # With list comprehension
+        results = [
+            anime for anime in ANIMES_LIST if query.lower() in anime["title"].lower()
+        ]
+
+        return {"data": results, "query": query}
     return {"data": ANIMES_LIST}

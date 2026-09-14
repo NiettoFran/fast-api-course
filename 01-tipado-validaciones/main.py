@@ -1,10 +1,11 @@
 # BaseModel es la clase de Pydantic de la que heredan todos nuestros modelos
 # de datos. Cada clase que hereda de BaseModel describe la forma de un JSON:
 # qué campos tiene y de qué tipo debe ser cada uno.
+
 from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel
 
-app = FastAPI(title="Posts API")
+app = FastAPI(title="Posts API", version="1.0.0")
 
 POSTS = [
     {
@@ -31,7 +32,7 @@ POSTS = [
 # el código de la función llegue a ejecutarse.
 class PostBase(BaseModel):
     title: str
-    content: str
+    content: str = "Valor por defecto"
 
 
 # PostCreate hereda todos los campos de PostBase sin agregar nada nuevo.
@@ -47,7 +48,7 @@ class PostCreate(PostBase):
 # ejemplo, hacer los campos opcionales) sin afectar la validación de "create".
 class PostUpdate(BaseModel):
     title: str
-    content: str
+    content: str | None = None
 
 
 @app.get("/")
@@ -102,8 +103,8 @@ def update_post(post_id: int, data: PostUpdate):
 
     for post in POSTS:
         if post["id"] == post_id:
-            post["title"] = data.title
-            post["content"] = data.content
+            update_data = data.model_dump(exclude_unset=True)
+            post.update(update_data)
 
             return {"message": "Updated post successfully", "data": post}
 
